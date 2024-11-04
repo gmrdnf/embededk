@@ -1,0 +1,10 @@
+-Dfile.encoding=UTF-8
+-Dstdout.encoding=UTF-8
+-Dstderr.encoding=UTF-8
+-classpath
+"C:\\Users\\Administrator\\git\\embededk\\javabasic\\bin"
+-XX:+ShowCodeDetailsInExceptionMessages
+javabasic.ConsoleIO
+안녕
+방가
+배고파

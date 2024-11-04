@@ -2,9 +2,11 @@ package javabasic;
 
 public class Variable2 {
 		//중요
-	//1.static변수
+	//실행 서순 컴파일 타임 => 클래스 로딩타임 => 실행시간(런타임) 순
+	//1.static변수/칠판3참조
 	//1)클래스로딩타임에 JVM이 관리하는 Method area라는 메모리 영역에 생김
 	//2)객체 생성없이 사용할 수 있는 변수/시점을 잘 알아야함
+	//따로 선언없이 바로사용가능
 	//method area가 실행될때 static변수가 자리를잡음
 	//3)클래스의 모든 객체들이 값을 공유하는 변수
 //	static member variable
@@ -12,7 +14,7 @@ public class Variable2 {
 	//static 맴버 번수
 	//2.non-static변수
 	//1)실행타임에(런타임)JVM이 관리하는 Heap Area라는 메모리 영역에 생김
-	//2)객채가 생성되면 객체마다 가지게 되는 변수 =객채마다 변숭의 값을 달리할 수 있음
+	//2)객채가 생성되면 객체마다 가지게 되는 변수 =객채마다 변수의 값을 달리할 수 있음
 	//Heap Area가 실행될때 non-static변수가 자리를 잡음
 	//객채가 생성되어야 그때생김
 // non static member  variable
@@ -49,7 +51,7 @@ public class Variable2 {
 			 //main 메소드가 호출되면 메모리에 생겼다가 main 메소드가 종료되면 소멸
 			
 			 int li = 3;
-			
+			//Local은 메인메소드 안에서만 살아있을수 있고 메인메소드가 종료시 소멸
 			
 			
 	}
@@ -65,7 +67,7 @@ public class Variable2 {
 		}
 		//변수들은 값을따로 가져야하기에 객체로
 		//메소드는 따로 다넣을 필요는 없기에 Method area에 먼저올라옴
-		
+		//Q)메소드는 아래에 선언되어도 상관없는가/답 yes 자바 컴파일러가 자동으로 모든 메소드를 앞쪽에 선언하기 때문
 		
 		
 }
