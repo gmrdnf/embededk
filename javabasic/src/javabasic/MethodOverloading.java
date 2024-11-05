@@ -21,7 +21,7 @@ public class MethodOverloading {
 			
 			//대충 내식대로 정리하자면 내가 만드는 새로운 프린트 라고생각하면됨
 			//어떻게 작동할지도 무슨 타입을 넣을지도 몇개를 넣을지도 어떤순서를 갖을지도 내가 만드는
-			//새로운 공간이라 생각함
+			//새로운 공간이라 생각함 하지만 기능은 같은 그런
 	}//main
 
 	static void printStr(String str) {
