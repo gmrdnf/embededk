@@ -1,7 +1,7 @@
 package javabasic.project;
 
 public class LottoMain {
-	// 데이터 정의
+	// 데이터 정의 이걸 다 컬렉션으로 만들기
 		// 1.사용자가 입력한 숫자를 저장할 배열:크기6
 		// 2.컴퓨터로 추출한 숫자들을 저장할 배열:크기 7
 		// 기능정의
