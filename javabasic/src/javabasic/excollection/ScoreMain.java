@@ -1,7 +1,9 @@
 package javabasic.excollection;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -12,7 +14,6 @@ public class ScoreMain {
 	public static void main(String[] args) {
 		//3명의 이름과 국어,영어,수학성적을 입력받아 아래와 같은 형식으로 출력
 		//홍길동은 국어 100점 영어 90점 수학 80점 총점 270점
-		Scanner sc = new Scanner(System.in);
 		//List로 만들면 Score나 Studnet 둘중 하나만 들어가는데
 		//그걸 하위에서 합치고 다시 List로 넣을수 있나?
 		//그럼 그냥 String 으로 받아도 되는건가
@@ -33,34 +34,27 @@ public class ScoreMain {
 		
 		Scanner scanner = new Scanner(System.in);
 		
-		Map<Student, Score> studentMap = new HashMap<Student, Score>();
+		List<Student> studentList = new ArrayList<Student>();
 		
 		StringTokenizer st;
 		
 		for (int i=0; i<3; i++) {
-			
 			st = new StringTokenizer(scanner.next());
-			
-			String name = st.nextToken();
-			
-			Score score = new Score(
-					Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken()),
-					Integer.parseInt(st.nextToken())
-			);
-			
-			studentMap.put(new Student(name, score), null);
-			
+			studentList.add(new Student(
+					st.nextToken(","),
+					new Score(
+							Integer.parseInt(st.nextToken(",")),
+							Integer.parseInt(st.nextToken(",")),
+							Integer.parseInt(st.nextToken(","))
+					)
+			));
 		}
 		
-		Set<Student> keySet = studentMap.keySet();
-		
-		Iterator<Student> it = keySet.iterator();
-		while (it.hasNext()) {
-			System.out.println(it.next());
+		for (Student student : studentList) {
+			System.out.println(student);
 		}
 		
-		scanner.close();                
+		scanner.close();             
 		
 	}//main
 	
