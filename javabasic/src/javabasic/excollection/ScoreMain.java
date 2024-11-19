@@ -37,7 +37,7 @@ public class ScoreMain {
 		for (int i=0; i<3; i++) {
 			st = new StringTokenizer(scanner.next());
 			studentList.add(new Student(
-					st.nextToken(","),//이게 이름
+					st.nextToken(","),//이게 이름                               
 					new Score(
 							Integer.parseInt(st.nextToken(",")),//이게 국어
 							Integer.parseInt(st.nextToken(",")),//이게 영어
