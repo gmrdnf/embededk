@@ -19,7 +19,7 @@ public class TCPClient {
 		BufferedReader br = null;
 		try {
 			
-			clientSocket = new Socket("192.168.8.254", 5000);
+			clientSocket = new Socket("192.168.8.14", 5000);
 			
 			// 서버에 문자열 송신 스트림
 			pw = new PrintWriter(
