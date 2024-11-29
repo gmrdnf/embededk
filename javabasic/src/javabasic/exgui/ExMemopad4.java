@@ -1,8 +1,23 @@
 package javabasic.exgui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.WindowAdapter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,13 +38,24 @@ import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class ExMemopad2 extends JFrame {
-    // 메모 데이터를 저장하는 리스트
-    private final DefaultListModel<String> memoListModel;
-    private final JList<String> memoList;
-    private final JTextArea memoTextArea;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 
-    public ExMemopad2() {
+import javabasic.gson.Post;
+
+//Level 4 : 파일 처리
+
+public class ExMemopad4 extends JFrame {
+   
+    // 메모 데이터를 저장하는 리스트
+    private DefaultListModel<Memo> memoListModel;
+    private JList<Memo> memoList;
+    private JTextArea memoTextArea;
+    private JTextField tfSubject;
+    private File file;
+
+    public ExMemopad4() {
 
        setTitle(":: Java Notepad ::");
         setSize(800, 600);
@@ -46,8 +72,17 @@ public class ExMemopad2 extends JFrame {
         fileMenu.add(fileMenuItemNew);
         fileMenu.add(fileMenuItemOpen);
         fileMenu.add(fileMenuItemSave);
+        fileMenuItemSave.setEnabled(false);
         jMenuBar.add(fileMenu);
         jMenuBar.add(infoMenu);
+        
+        JPanel jNorthPanel = new JPanel(new BorderLayout());
+        ImageIcon logo = new ImageIcon("D:\\embededk\\files\\logo.png");
+        JLabel imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setIcon(logo);
+        jNorthPanel.add(imageLabel, BorderLayout.NORTH);
+        jNorthPanel.add(jMenuBar, BorderLayout.SOUTH);
         
         JFrame jframe = this;
         
@@ -67,36 +102,89 @@ public class ExMemopad2 extends JFrame {
       });
         
         fileMenuItemNew.addActionListener(e -> {
-           JOptionPane.showInputDialog(jframe, "파일명을 입력해 주세요!", "새파일", 
+           String newFileName = JOptionPane.showInputDialog(jframe, "파일명(.json)을 입력해 주세요!", "새파일", 
                  JOptionPane.INFORMATION_MESSAGE);
+           if (newFileName!=null && !newFileName.trim().isEmpty()) {
+              file = new File("D:\\embededk\\files\\"+newFileName);
+              try {
+                 file.createNewFile();
+              } catch (IOException ioe) {
+                 ioe.printStackTrace();
+              }
+              fileMenuItemSave.setEnabled(true);
+                tfSubject.setText("");
+                memoTextArea.setText("");
+           }
         });
         
         fileMenuItemOpen.addActionListener(e -> {
             JFileChooser chooser = new JFileChooser();
-            FileNameExtensionFilter filter = new FileNameExtensionFilter("json", "json");
+            FileNameExtensionFilter filter 
+               = new FileNameExtensionFilter("json", "json");
             chooser.setFileFilter(filter);
             int returnVal = chooser.showOpenDialog(jframe);
             if(returnVal == JFileChooser.APPROVE_OPTION) {
-               System.out.println(chooser.getSelectedFile().getName());
+               file = new File("D:\\embededk\\files\\" 
+                     + chooser.getSelectedFile().getName());
+               BufferedReader br = null;
+               try {
+                  br = new BufferedReader(new FileReader(file));
+                  String jsonStr = "";
+                  String line = "";
+                  while((line=br.readLine()) != null) {
+                     jsonStr += line;
+                  }
+                  Gson gson = new GsonBuilder().create();
+                   memoListModel = new DefaultListModel<Memo>();
+                  memoListModel.addAll(
+                        gson.fromJson(
+                              jsonStr, 
+                              new TypeToken<List<Memo>>() {}.getType()
+                        )
+                  );
+                  memoList.setModel(memoListModel);
+               } catch (IOException ioe) {
+                  ioe.printStackTrace();
+               }
             }           
         });
         
         fileMenuItemSave.addActionListener(e -> {
+           Object[] memoArr = memoListModel.toArray();
+           Gson gson = new GsonBuilder().create();
+           PrintWriter pw = null;
+           try {
+              pw = new PrintWriter(new FileWriter(file), true);
+              pw.print(gson.toJson(memoArr));
+              pw.flush();
+           } catch (FileNotFoundException fnfe) {
+              fnfe.printStackTrace();
+           } catch (IOException ioe) {
+              ioe.printStackTrace();
+           }
            JOptionPane.showMessageDialog(jframe, "저장 완료!", "저장 완료", 
                  JOptionPane.INFORMATION_MESSAGE);
         });
-        
-        memoListModel = new DefaultListModel<>();
-        memoList = new JList<>(memoListModel);
+
+        memoListModel = new DefaultListModel<Memo>();
+        memoList = new JList<Memo>(memoListModel);
+        memoList.setPreferredSize(new Dimension(250, 600));
+        memoList.setBackground(Color.GRAY);
+        memoList.setFont(new Font("굴림", Font.BOLD, 20));
         memoList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane listScrollPane = new JScrollPane(memoList);
 
-        
         memoTextArea = new JTextArea();
+        memoTextArea.setBackground(Color.BLACK);
+        memoTextArea.setForeground(Color.WHITE);
+        memoTextArea.setFont(new Font("굴림", Font.BOLD, 20));        
         JScrollPane textScrollPane = new JScrollPane(memoTextArea);
         
         JPanel centerPanel = new JPanel(new BorderLayout());
-        JTextField tfSubject = new JTextField();
+        tfSubject = new JTextField();
+        tfSubject.setBackground(Color.BLACK);
+        tfSubject.setForeground(Color.WHITE);
+        tfSubject.setFont(new Font("굴림", Font.BOLD, 20));
         centerPanel.add(tfSubject, BorderLayout.NORTH);
         centerPanel.add(textScrollPane, BorderLayout.CENTER);
 
@@ -112,23 +200,35 @@ public class ExMemopad2 extends JFrame {
         memoList.addListSelectionListener(e -> displaySelectedMemo());
 
         // 프레임에 구성요소 추가
-        add(jMenuBar, BorderLayout.NORTH);
+        add(jNorthPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.SOUTH);
         add(listScrollPane, BorderLayout.WEST);
         add(centerPanel, BorderLayout.CENTER);
 
         setVisible(true);
-    }
+        
+        // 프로그램 시작시에 새파일 다이얼로그 열기
+        this.addWindowListener(new WindowAdapter() {
+           public void windowOpened(java.awt.event.WindowEvent e) {
+              fileMenuItemNew.doClick();   // 클릭 이벤트 강제 발생
+           };
+      });
+        
+    } // constructor
 
     // 메모 등록 메서드
     private void addMemo() {
-        String newMemo = memoTextArea.getText().trim();
-        if (!newMemo.isEmpty()) {
+       Memo newMemo 
+          = new Memo(memoListModel.getSize(), 
+                tfSubject.getText().trim(), memoTextArea.getText().trim());
+        if (!tfSubject.getText().isEmpty()
+              && !memoTextArea.getText().isEmpty()) {
             memoListModel.addElement(newMemo);
+            tfSubject.setText("");
             memoTextArea.setText("");
             JOptionPane.showMessageDialog(this, "메모가 등록되었습니다.");
         } else {
-            JOptionPane.showMessageDialog(this, "메모 내용을 입력하세요.");
+            JOptionPane.showMessageDialog(this, "메모 제목과 내용을 입력하세요.");
         }
     }
 
@@ -136,12 +236,17 @@ public class ExMemopad2 extends JFrame {
     private void editMemo() {
         int selectedIndex = memoList.getSelectedIndex();
         if (selectedIndex != -1) {
-            String updatedMemo = memoTextArea.getText().trim();
-            if (!updatedMemo.isEmpty()) {
+           Memo updatedMemo = new Memo(
+                 memoList.getSelectedIndex(),
+                 tfSubject.getText().trim(),
+                 memoTextArea.getText().trim()
+           );
+            if (!tfSubject.getText().isEmpty()
+                  && !memoTextArea.getText().isEmpty()) {
                 memoListModel.set(selectedIndex, updatedMemo);
                 JOptionPane.showMessageDialog(this, "메모가 수정되었습니다.");
             } else {
-                JOptionPane.showMessageDialog(this, "메모 내용을 입력하세요.");
+                JOptionPane.showMessageDialog(this, "메모 제목과 내용을 입력하세요.");
             }
         } else {
             JOptionPane.showMessageDialog(this, "수정할 메모를 선택하세요.");
@@ -153,6 +258,7 @@ public class ExMemopad2 extends JFrame {
         int selectedIndex = memoList.getSelectedIndex();
         if (selectedIndex != -1) {
             memoListModel.remove(selectedIndex);
+            tfSubject.setText("");
             memoTextArea.setText("");
             JOptionPane.showMessageDialog(this, "메모가 삭제되었습니다.");
         } else {
@@ -164,7 +270,8 @@ public class ExMemopad2 extends JFrame {
     private void displaySelectedMemo() {
         int selectedIndex = memoList.getSelectedIndex();
         if (selectedIndex != -1) {
-            memoTextArea.setText(memoListModel.get(selectedIndex));
+           tfSubject.setText(memoListModel.get(selectedIndex).getSubject());
+            memoTextArea.setText(memoListModel.get(selectedIndex).getContent());
         }
     }
     
@@ -193,7 +300,7 @@ public class ExMemopad2 extends JFrame {
 
     public static void main(String[] args) {
         // 프로그램 실행
-        SwingUtilities.invokeLater(ExMemopad2::new);
+        SwingUtilities.invokeLater(ExMemopad4::new);
     }
     
 }
